@@ -18,7 +18,7 @@ public class WeatherApp {
         double latitude = (double) location.get("latitude");
         double longitude = (double) location.get("longitude");
 
-        String urlString = "https://api.open-meteo.com/v1/forecast?latitude=" + latitude + "&longitude=" + longitude + "&hourly=temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m";
+        String urlString = "https://api.open-meteo.com/v1/forecast?latitude=" + latitude + "&longitude=" + longitude +"&hourly=temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m&timezone=Europe%2FBerlin";
 
         try {
             HttpURLConnection conn = fetchApiResponse(urlString);
@@ -51,17 +51,28 @@ public class WeatherApp {
             double temperature = (double) temperatureData.get(index);
 
             // Get weather code
-            JSONArray weatherData = (JSONArray) hourly.get("weathercode");
+            JSONArray weatherData = (JSONArray) hourly.get("weather_code");
             String weatherCondition = convertWeatherCode((long) weatherData.get(index));
 
             // Get humidity data
-            JSONArray relativeHumidity = (JSONArray) hourly.get("relativehumidity_2m");
+            JSONArray relativeHumidity = (JSONArray) hourly.get("relative_humidity_2m");
             long humidity = (long) relativeHumidity.get(index);
 
+            // Get windspeed data
+            JSONArray windspeedData = (JSONArray) hourly.get("wind_speed_10m");
+            double windspeed = (double) windspeedData.get(index);
+
+            // Build the weather json that we pass to our frontend
+            JSONObject weather = new JSONObject();
+            weather.put("temperature", temperature);
+            weather.put("weatherCondition", weatherCondition);
+            weather.put("windspeed", windspeed);
+            weather.put("humidity", humidity);
+
+            return weather;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return null;
     }
 
     private static JSONArray getLocationData(String locationName) {
