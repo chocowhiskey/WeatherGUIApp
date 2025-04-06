@@ -7,7 +7,8 @@ public class AppLauncher {
             public void run() {
                 // display weather app
                 // new WeatherAppGUIApp().setVisible(true);
-                System.out.println(WeatherApp.getLocationData("Tokyo"));
+                //System.out.println(WeatherApp.getLocationData("Tokyo"));
+                System.out.println(WeatherApp.getCurrentTime());
             }
         });
     }
